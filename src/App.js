@@ -11,15 +11,7 @@ function Square({value, onSquareClick}) {
   );
 }
 
-// export makes the Board function accessible outside of this file
-// default tells other files using the code that it's the main function in the file
-export default function Board() {
-  // each time a player moves, xIsNext (a boolean) is flipped to determine which player goes next
-  // and the game's state is saved
-  const [xIsNext, setXIsNext] = useState(true);
-  // Array(9).fill(null) creates an array with 9 elements and sets each of them to null
-  const [squares, setSquares] = useState(Array(9).fill(null)); 
-
+function Board({ xIsNext, squares, onPlay }) {
   function handleClick(i) {
     // if square is already filled or if a player has already won, return the handleClick function early
     if (squares[i] || calculateWinner(squares)) {
@@ -33,10 +25,8 @@ export default function Board() {
     } else {
       nextSquares[i] = "O";
     }
-    // calling setSquares lets React know the component's state has changed
-    // this triggers a re-render of the components that use the squares state (Board) as well as its child components (Square)
-    setSquares(nextSquares);
-    setXIsNext(!xIsNext);
+    // Game component updates the Board when the user clicks a square
+    onPlay(nextSquares);
   }
 
   const winner = calculateWinner(squares);
@@ -66,6 +56,37 @@ export default function Board() {
         <Square value={squares[8]} onSquareClick={() => handleClick(8)} />
       </div>
     </>
+  );
+}
+
+// export makes the Board function accessible outside of this file
+// default tells other files using the code that it's the main function in the file
+export default function Game() {
+  // state to track which player is next
+  const [xIsNext, setXIsNext] = useState(true);
+  // state to track the history of moves
+  // creates an array with a single item, which itself is an array of 9 nulls
+  const [history, setHistory] = useState([Array(9).fill(null)]);
+  // read last squares array from history and render the squares for the current move
+  const currentSquares = history[history.length - 1];
+
+  // this function will be called by the Board component to update the game
+  function handlePlay(nextSquares) {
+    // create a new array that contains all the items in history, followed by nextSquares
+    setHistory([...history, nextSquares]);
+    setXIsNext(!xIsNext);
+  }
+
+  return (
+    <div className="game">
+      <div className="game-board">
+        {/* pass xIsNext, currentSquares, handlePlay as props to the Board component */}
+        <Board xIsNext={xIsNext} squares={currentSquares} onPlay={handlePlay} />
+      </div>
+      <div className="game-info">
+        <ol>{/*TODO*/}</ol>
+      </div>
+    </div>
   );
 }
 
