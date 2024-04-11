@@ -67,18 +67,26 @@ export default function Game() {
   // state to track the history of moves
   // creates an array with a single item, which itself is an array of 9 nulls
   const [history, setHistory] = useState([Array(9).fill(null)]);
-  // read last squares array from history and render the squares for the current move
-  const currentSquares = history[history.length - 1];
+  // keep track of which step the user is currently viewing
+  const [currentMove, setCurrentMove] = useState(0);
+  // render the currently selected move
+  const currentSquares = history[currentMove];
 
   // this function will be called by the Board component to update the game
   function handlePlay(nextSquares) {
-    // create a new array that contains all the items in history, followed by nextSquares
-    setHistory([...history, nextSquares]);
+    // only keeps a portion of the old history
+    const nextHistory = [...history.slice(0, currentMove + 1), nextSquares];
+    setHistory(nextHistory);
+    // each time a move is made, update currentMove to point to the latest history entry
+    setCurrentMove(nextHistory.length - 1);
     setXIsNext(!xIsNext);
   }
 
   function jumpTo(nextMove) {
-    // TODO
+    // updates currentMove
+    setCurrentMove(nextMove);
+    // set xIsNext to true if number currentMove being changed to is even
+    setXIsNext(nextMove % 2 === 0);
   }
 
   // squares argument goes through each element of history and move argument goes through each array index
@@ -90,8 +98,9 @@ export default function Game() {
       description = "Go to game start";
     }
     // for each move in the game's history, create a list item which contains a button
+    // use move index as a key since moves will never be re-ordered, deleted, or inserted in the middle
     return (
-      <li>
+      <li key={move}> 
         <button onClick={() => jumpTo(move)}>{description}</button>
       </li>
     );
