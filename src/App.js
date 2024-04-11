@@ -14,16 +14,29 @@ function Square({value, onSquareClick}) {
 // export makes the Board function accessible outside of this file
 // default tells other files using the code that it's the main function in the file
 export default function Board() {
+  // each time a player moves, xIsNext (a boolean) is flipped to determine which player goes next
+  // and the game's state is saved
+  const [xIsNext, setXIsNext] = useState(true);
   // Array(9).fill(null) creates an array with 9 elements and sets each of them to null
   const [squares, setSquares] = useState(Array(9).fill(null)); 
 
   function handleClick(i) {
+    // if square is already filled, return the handleClick function early
+    if (squares[i]) {
+      return;
+    }
     // create a copy of the squares array (nextSquares) with the slice() array method
     const nextSquares = squares.slice();
-    nextSquares[i] = "X";
+    // flip the value of xIsNext
+    if (xIsNext) {
+      nextSquares[i] = "X";
+    } else {
+      nextSquares[i] = "O";
+    }
     // calling setSquares lets React know the component's state has changed
     // this triggers a re-render of the components that use the squares state (Board) as well as its child components (Square)
     setSquares(nextSquares);
+    setXIsNext(!xIsNext);
   }
 
   return (
