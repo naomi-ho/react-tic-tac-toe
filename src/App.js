@@ -62,13 +62,13 @@ function Board({ xIsNext, squares, onPlay }) {
 // export makes the Board function accessible outside of this file
 // default tells other files using the code that it's the main function in the file
 export default function Game() {
-  // state to track which player is next
-  const [xIsNext, setXIsNext] = useState(true);
   // state to track the history of moves
   // creates an array with a single item, which itself is an array of 9 nulls
   const [history, setHistory] = useState([Array(9).fill(null)]);
   // keep track of which step the user is currently viewing
   const [currentMove, setCurrentMove] = useState(0);
+  // set xIsNext to true if number currentMove being changed to is even
+  const xIsNext = currentMove % 2 === 0;
   // render the currently selected move
   const currentSquares = history[currentMove];
 
@@ -79,14 +79,11 @@ export default function Game() {
     setHistory(nextHistory);
     // each time a move is made, update currentMove to point to the latest history entry
     setCurrentMove(nextHistory.length - 1);
-    setXIsNext(!xIsNext);
   }
 
   function jumpTo(nextMove) {
     // updates currentMove
     setCurrentMove(nextMove);
-    // set xIsNext to true if number currentMove being changed to is even
-    setXIsNext(nextMove % 2 === 0);
   }
 
   // squares argument goes through each element of history and move argument goes through each array index
