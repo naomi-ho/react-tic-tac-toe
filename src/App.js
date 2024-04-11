@@ -49,7 +49,8 @@ export default function Board() {
 
   return (
     <> {/* fragments are used to return a single JSX element by wrapping multiple adjacent JSX elements */}
-      <div className="board-row"> {/* group squares into rows to make a row */}
+      <div className="status">{status}</div>
+      <div className="board-row">
         <Square value={squares[0]} onSquareClick={() => handleClick(0)} />
         <Square value={squares[1]} onSquareClick={() => handleClick(1)} />
         <Square value={squares[2]} onSquareClick={() => handleClick(2)} />
